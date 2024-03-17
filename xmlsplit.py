@@ -1,21 +1,21 @@
 #!/usr/bin/env python3
 """
- Cli utility for spliting a big XML file into smaller parts.
+xmlsplit - split a XML file into pieces
 
- The breakpoint will be the element of depth 1 (below root) that does not
- fit in the specified maximum size. Each part created will have the same
- root element.
+The breakpoint will be the element of depth one (below root) that does not
+fit in the specified maximum size. Each part created will have the same
+root element.
 
- Usage:
-     $ xmsplit size prefix [filename]
+Usage:
+    $ xmsplit size prefix [filename]
 
-     Eg:
-     $ xmlsplit 1000000 part_ mydata.xml
-     or
-     $ cat mydata.xml | xmlsplit 1000000 part_
+    Eg:
+    $ xmlsplit 1000000 part_ mydata.xml
+    or
+    $ cat mydata.xml | xmlsplit 1000000 part_
 """
-from xml.sax import saxutils, handler, make_parser
 
+from xml.sax import saxutils, handler, make_parser
 import sys
 
 
@@ -28,20 +28,21 @@ class SplitterContentHandler(handler.ContentHandler):
 
         self._buffer(clean=True)
         self._part = 1
-        self._out = open('{}{}.xml'.format(self._prefix, self._part), 'w')
+        self._out = open("{}{}.xml".format(self._prefix, self._part), "w")
         self._current_size = 0
 
-        self._out_encoding = 'utf-8'
+        self._out_encoding = "utf-8"
         self._xml_declaration = (
-            '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n')
+            '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'
+        )
 
         # root node will be at depth 0
         self._depth = -1
         self._root_tag = None
         self._end_tag = None
 
-    def _buffer(self, text='', clean=False):
-        self.__buffer = '' if clean else self.__buffer + text
+    def _buffer(self, text="", clean=False):
+        self.__buffer = "" if clean else self.__buffer + text
         return self.__buffer
 
     def _write(self, text=None):
@@ -52,9 +53,9 @@ class SplitterContentHandler(handler.ContentHandler):
 
     def _fits_buffer(self):
         total_required = (
-            self._current_size +
-            len(self._buffer().encode(self._out_encoding)) +
-            len(self._end_tag.encode(self._out_encoding))
+            self._current_size
+            + len(self._buffer().encode(self._out_encoding))
+            + len(self._end_tag.encode(self._out_encoding))
         )
         return total_required < self._size
 
@@ -63,7 +64,7 @@ class SplitterContentHandler(handler.ContentHandler):
         self._out.close()
 
         self._part += 1
-        self._out = open('{}{}.xml'.format(self._prefix, self._part), 'w')
+        self._out = open("{}{}.xml".format(self._prefix, self._part), "w")
 
         self._current_size = 0
         self.startDocument()
@@ -74,20 +75,22 @@ class SplitterContentHandler(handler.ContentHandler):
 
     def startElement(self, name, attrs):
         self._depth += 1
-        attributes = ''.join([
-            ' {}="{}"'.format(name, saxutils.escape(value))
-            for (name, value) in attrs.items()
-        ])
-        tag = '<{}{}>'.format(name, attributes)
+        attributes = "".join(
+            [
+                ' {}="{}"'.format(name, saxutils.escape(value))
+                for (name, value) in attrs.items()
+            ]
+        )
+        tag = "<{}{}>".format(name, attributes)
 
         if self._depth == 0:  # root
             self._root_tag = tag
-            self._end_tag = '</{}>'.format(name)
+            self._end_tag = "</{}>".format(name)
 
         self._buffer(tag)
 
     def endElement(self, name):
-        self._buffer('</{}>'.format(name))
+        self._buffer("</{}>".format(name))
         if self._depth == 1:
             if not self._fits_buffer():
                 self._rotate()
@@ -105,17 +108,23 @@ class SplitterContentHandler(handler.ContentHandler):
         self._buffer(content)
 
     def processingInstruction(self, target, data):
-        self._buffer('<?{} {}?>'.format(target, data))
+        self._buffer("<?{} {}?>".format(target, data))
 
 
-def split(size, prefix, filename=None):
+def split(size, prefix, filename):
     size = int(size)
-    input = filename if filename else sys.stdin
 
     parser = make_parser()
     parser.setContentHandler(SplitterContentHandler(size, prefix))
-    parser.parse(input)
+    parser.parse(filename)
 
 
-if __name__ == '__main__':
-    split(*sys.argv[1:])
+def main():
+    size = sys.argv[1]
+    prefix = sys.argv[2]
+    filename = sys.argv[3] if len(sys.argv) > 3 else sys.stdin
+    split(size, prefix, filename)
+
+
+if __name__ == "__main__":
+    main()
