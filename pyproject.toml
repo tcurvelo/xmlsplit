@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "xmlsplit"
+version = "0.1.0"
+description = "split a XML file into pieces"
+authors = ["Thiago Curvelo <tcurvelo@gmail.com>"]
+readme = "README.md"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+[tool.poetry.scripts]
+xmlsplit = "xmlsplit:main"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.3.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
