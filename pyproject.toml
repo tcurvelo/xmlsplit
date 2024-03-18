@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "xmlsplit"
-version = "0.1.1"
+version = "0.1.2"
 description = "split a XML file into pieces"
 authors = ["Thiago Curvelo <tcurvelo@gmail.com>"]
 readme = "README.md"

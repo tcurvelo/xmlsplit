@@ -8,7 +8,7 @@ root element.
 
 Usage:
 
-    xmsplit size prefix [filename]
+    xmlsplit size prefix [filename]
 
 Eg:
 

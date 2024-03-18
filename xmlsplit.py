@@ -7,7 +7,7 @@ fit in the specified maximum size. Each part created will have the same
 root element.
 
 Usage:
-    $ xmsplit size prefix [filename]
+    $ xmlsplit size prefix [filename]
 """
 
 from xml.sax import saxutils, handler, make_parser
