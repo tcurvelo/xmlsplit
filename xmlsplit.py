@@ -8,11 +8,6 @@ root element.
 
 Usage:
     $ xmsplit size prefix [filename]
-
-    Eg:
-    $ xmlsplit 1000000 part_ mydata.xml
-    or
-    $ cat mydata.xml | xmlsplit 1000000 part_
 """
 
 from xml.sax import saxutils, handler, make_parser
